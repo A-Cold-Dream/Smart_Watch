@@ -293,6 +293,7 @@ void SPL06_starttask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+    SPL06_001_Read();
     vTaskDelayUntil(&last_wake, sample_period);
   }
   /* USER CODE END SPL06_starttask */
@@ -313,6 +314,7 @@ void EM7028_starttask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+    EM7028_Read();
     vTaskDelayUntil(&last_wake, sample_period);
   }
   /* USER CODE END EM7028_starttask */
@@ -333,6 +335,7 @@ void LSM303_starttask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+    LSM303DLHC_Read();
     vTaskDelayUntil(&last_wake, sample_period);
   }
   /* USER CODE END LSM303_starttask */

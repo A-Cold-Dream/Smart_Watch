@@ -84,11 +84,16 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${WATCH_UI_SOURCES}
     APP/Src/Services/watch_display.c
     APP/Src/Tasks/SetTime.c
+    APP/Src/Tasks/SetDate.c
     Components/Display/Src/lcd_init.c
     Components/Display/Src/lcd.c
     Components/Display/Src/CST816.c
     Components/Sensors/Src/AHT21.c
     Components/Sensors/Src/MPU6050.c
+    Components/Sensors/Src/sensor_i2c.c
+    Components/Sensors/Src/EM7028.c
+    Components/Sensors/Src/LSM303DLHC.c
+    Components/Sensors/Src/SPL06_001.c
     BSP/Src/iic_hal.c
     BSP/Src/Key.c
     BSP/Src/Led.c

@@ -58,11 +58,9 @@ static uint8_t Configure(void)
 
 static uint8_t ReadPressure(int32_t *pressure_pa)
 {
-    uint8_t status, frame[6];
+    uint8_t frame[6];
     float p, t, pa;
-    if (!SensorI2C_Read(SPL_ADDR, MEAS_CFG, &status, 1U) ||
-        (status & 0x37U) != 0x37U ||
-        !SensorI2C_Read(SPL_ADDR, PRESSURE_MSB, frame, sizeof(frame)))
+    if (!SensorI2C_Read(SPL_ADDR, PRESSURE_MSB, frame, sizeof(frame)))
         return 0U;
     p = SignedField((Word(frame) << 8) | frame[2], 24) / 1572864.0f;
     t = SignedField((Word(frame + 3) << 8) | frame[5], 24) / 524288.0f;
@@ -77,12 +75,21 @@ static uint8_t ReadPressure(int32_t *pressure_pa)
 void SPL06_001_Read(void)
 {
     static uint8_t configured;
+    static TickType_t last_frame;
     SPL06_001_Sample_t sample = {0};
-    if (!configured)
+    if (!configured) {
         configured = Configure();
-    else
-    {
-        sample.valid = ReadPressure(&sample.pressure_pa);
+        last_frame = xTaskGetTickCount();
+    } else {
+        uint8_t status;
+        if (SensorI2C_Read(SPL_ADDR, MEAS_CFG, &status, 1U) && (status & 7U) == 7U) {
+            if ((status & 0x30U) == 0x30U) {
+                sample.valid = ReadPressure(&sample.pressure_pa);
+                last_frame = xTaskGetTickCount();
+            } else if (xTaskGetTickCount() - last_frame < pdMS_TO_TICKS(500U)) {
+                return;  /* 8 Hz 转换尚未完成，保留上一帧。 */
+            }
+        }
         configured = sample.valid;
     }
     taskENTER_CRITICAL();

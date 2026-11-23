@@ -17,7 +17,7 @@
  *
  * Tool            : GUI Guider
  * Version         : 2.0.1
- * Generated on    : 2026/11/22
+ * Generated on    : 2026/11/23
  * ------------------------------------------------------------------------------
  */
 
@@ -355,53 +355,68 @@ void setup_main(gg_ui_t * ui)
     // ui->main.xiala_slider_1: attributes applied after styles
     lv_slider_set_value(ui->main.xiala_slider_1, 50, LV_ANIM_OFF);
 
-    // Create button: ui->main.xiala_lanya
-    ui->main.xiala_lanya = lv_button_create(ui->main.tileview_1_xiala);
-    lv_obj_set_width(ui->main.xiala_lanya, 45);
-    lv_obj_set_height(ui->main.xiala_lanya, 45);
-    lv_obj_set_align(ui->main.xiala_lanya, LV_ALIGN_TOP_LEFT);
-    lv_obj_set_x(ui->main.xiala_lanya, -2);
-    lv_obj_set_y(ui->main.xiala_lanya, -2);
-    lv_obj_add_flag(ui->main.xiala_lanya, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_remove_flag(ui->main.xiala_lanya, LV_OBJ_FLAG_PRESS_LOCK);
+    // Create label: ui->main.slider_1_label_7
+    ui->main.slider_1_label_7 = lv_label_create(ui->main.xiala_slider_1);
+    lv_obj_set_width(ui->main.slider_1_label_7, LV_SIZE_CONTENT);
+    lv_obj_set_height(ui->main.slider_1_label_7, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui->main.slider_1_label_7, LV_ALIGN_TOP_LEFT);
+    lv_obj_set_x(ui->main.slider_1_label_7, 12);
+    lv_obj_set_y(ui->main.slider_1_label_7, 87);
+    lv_label_set_text(ui->main.slider_1_label_7, LV_SYMBOL_EYE_OPEN);
 
-    // Style: ui->main.xiala_lanya [LV_PART_MAIN|LV_STATE_DEFAULT]
-    lv_obj_set_style_bg_color(ui->main.xiala_lanya, lv_color_hex(0x616970), LV_PART_MAIN | LV_STATE_DEFAULT);
+    // Style: ui->main.slider_1_label_7 [LV_PART_MAIN|LV_STATE_DEFAULT]
+    lv_obj_set_style_text_color(ui->main.slider_1_label_7, lv_color_hex(0xffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui->main.slider_1_label_7, &lv_font_montserratMedium_18, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    // Style: ui->main.xiala_lanya [LV_PART_MAIN|LV_STATE_CHECKED]
-    lv_obj_set_style_bg_color(ui->main.xiala_lanya, lv_color_hex(0x2196f3), LV_PART_MAIN | LV_STATE_CHECKED);
+    // Create button: ui->main.xiala_BuleTooth
+    ui->main.xiala_BuleTooth = lv_button_create(ui->main.tileview_1_xiala);
+    lv_obj_set_width(ui->main.xiala_BuleTooth, 45);
+    lv_obj_set_height(ui->main.xiala_BuleTooth, 45);
+    lv_obj_set_align(ui->main.xiala_BuleTooth, LV_ALIGN_TOP_LEFT);
+    lv_obj_set_x(ui->main.xiala_BuleTooth, -2);
+    lv_obj_set_y(ui->main.xiala_BuleTooth, -2);
+    lv_obj_add_flag(ui->main.xiala_BuleTooth, LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_remove_flag(ui->main.xiala_BuleTooth, LV_OBJ_FLAG_PRESS_LOCK);
 
-    // Create label: ui->main.lanya_button_1_label
-    ui->main.lanya_button_1_label = lv_label_create(ui->main.xiala_lanya);
-    lv_obj_set_width(ui->main.lanya_button_1_label, LV_SIZE_CONTENT);
-    lv_obj_set_height(ui->main.lanya_button_1_label, LV_SIZE_CONTENT);
-    lv_obj_set_align(ui->main.lanya_button_1_label, LV_ALIGN_CENTER);
-    lv_obj_set_x(ui->main.lanya_button_1_label, 0);
-    lv_obj_set_y(ui->main.lanya_button_1_label, 2);
+    // Style: ui->main.xiala_BuleTooth [LV_PART_MAIN|LV_STATE_DEFAULT]
+    lv_obj_set_style_bg_color(ui->main.xiala_BuleTooth, lv_color_hex(0x616970), LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    // Create button: ui->main.xiala_WiFI
-    ui->main.xiala_WiFI = lv_button_create(ui->main.tileview_1_xiala);
-    lv_obj_set_width(ui->main.xiala_WiFI, 45);
-    lv_obj_set_height(ui->main.xiala_WiFI, 45);
-    lv_obj_set_align(ui->main.xiala_WiFI, LV_ALIGN_TOP_LEFT);
-    lv_obj_set_x(ui->main.xiala_WiFI, 107);
-    lv_obj_set_y(ui->main.xiala_WiFI, -2);
-    lv_obj_add_flag(ui->main.xiala_WiFI, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_remove_flag(ui->main.xiala_WiFI, LV_OBJ_FLAG_PRESS_LOCK);
+    // Style: ui->main.xiala_BuleTooth [LV_PART_MAIN|LV_STATE_CHECKED]
+    lv_obj_set_style_bg_color(ui->main.xiala_BuleTooth, lv_color_hex(0x2196f3), LV_PART_MAIN | LV_STATE_CHECKED);
 
-    // Style: ui->main.xiala_WiFI [LV_PART_MAIN|LV_STATE_DEFAULT]
-    lv_obj_set_style_bg_color(ui->main.xiala_WiFI, lv_color_hex(0x616970), LV_PART_MAIN | LV_STATE_DEFAULT);
+    // Create label: ui->main.BuleTooth_button_1_label
+    ui->main.BuleTooth_button_1_label = lv_label_create(ui->main.xiala_BuleTooth);
+    lv_obj_set_width(ui->main.BuleTooth_button_1_label, LV_SIZE_CONTENT);
+    lv_obj_set_height(ui->main.BuleTooth_button_1_label, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui->main.BuleTooth_button_1_label, LV_ALIGN_CENTER);
+    lv_obj_set_x(ui->main.BuleTooth_button_1_label, 0);
+    lv_obj_set_y(ui->main.BuleTooth_button_1_label, 2);
 
-    // Style: ui->main.xiala_WiFI [LV_PART_MAIN|LV_STATE_CHECKED]
-    lv_obj_set_style_bg_color(ui->main.xiala_WiFI, lv_color_hex(0x2196f3), LV_PART_MAIN | LV_STATE_CHECKED);
+    // Create button: ui->main.xiala_Close
+    ui->main.xiala_Close = lv_button_create(ui->main.tileview_1_xiala);
+    lv_obj_set_width(ui->main.xiala_Close, 45);
+    lv_obj_set_height(ui->main.xiala_Close, 45);
+    lv_obj_set_align(ui->main.xiala_Close, LV_ALIGN_TOP_LEFT);
+    lv_obj_set_x(ui->main.xiala_Close, 107);
+    lv_obj_set_y(ui->main.xiala_Close, -2);
 
-    // Create label: ui->main.WiFI_button_1_label
-    ui->main.WiFI_button_1_label = lv_label_create(ui->main.xiala_WiFI);
-    lv_obj_set_width(ui->main.WiFI_button_1_label, LV_SIZE_CONTENT);
-    lv_obj_set_height(ui->main.WiFI_button_1_label, LV_SIZE_CONTENT);
-    lv_obj_set_align(ui->main.WiFI_button_1_label, LV_ALIGN_CENTER);
-    lv_obj_set_x(ui->main.WiFI_button_1_label, 0);
-    lv_obj_set_y(ui->main.WiFI_button_1_label, 2);
+    lv_obj_remove_flag(ui->main.xiala_Close, LV_OBJ_FLAG_PRESS_LOCK | LV_OBJ_FLAG_CHECKABLE);
+
+    // Style: ui->main.xiala_Close [LV_PART_MAIN|LV_STATE_DEFAULT]
+    lv_obj_set_style_bg_color(ui->main.xiala_Close, lv_color_hex(0xf20707), LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    // Create label: ui->main.Close_button_1_label
+    ui->main.Close_button_1_label = lv_label_create(ui->main.xiala_Close);
+    lv_obj_set_width(ui->main.Close_button_1_label, LV_SIZE_CONTENT);
+    lv_obj_set_height(ui->main.Close_button_1_label, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui->main.Close_button_1_label, LV_ALIGN_CENTER);
+    lv_obj_set_x(ui->main.Close_button_1_label, 0);
+    lv_obj_set_y(ui->main.Close_button_1_label, 0);
+    lv_label_set_text(ui->main.Close_button_1_label, LV_SYMBOL_POWER);
+
+    // Style: ui->main.Close_button_1_label [LV_PART_MAIN|LV_STATE_DEFAULT]
+    lv_obj_set_style_text_font(ui->main.Close_button_1_label, &lv_font_montserratMedium_18,
+                               LV_PART_MAIN | LV_STATE_DEFAULT);
 
     // Create button: ui->main.xiala_button_1
     ui->main.xiala_button_1 = lv_button_create(ui->main.tileview_1_xiala);
@@ -449,7 +464,8 @@ void setup_main(gg_ui_t * ui)
     lv_obj_set_height(ui->main.button_1_copy_button_1_label, LV_SIZE_CONTENT);
     lv_obj_set_align(ui->main.button_1_copy_button_1_label, LV_ALIGN_CENTER);
     lv_obj_set_x(ui->main.button_1_copy_button_1_label, 0);
-    lv_obj_set_y(ui->main.button_1_copy_button_1_label, 0);
+    lv_obj_set_y(ui->main.button_1_copy_button_1_label, 1);
+    lv_label_set_text(ui->main.button_1_copy_button_1_label, LV_SYMBOL_BLUETOOTH);
 
     // Create button: ui->main.xiala_button_1_copy1
     ui->main.xiala_button_1_copy1 = lv_button_create(ui->main.tileview_1_xiala);

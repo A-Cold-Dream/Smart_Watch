@@ -17,7 +17,7 @@
  *
  * Tool            : GUI Guider
  * Version         : 2.0.1
- * Generated on    : 2026/11/22
+ * Generated on    : 2026/11/23
  * ------------------------------------------------------------------------------
  */
 
@@ -65,7 +65,7 @@ void setup_left(gg_ui_t * ui)
     lv_obj_set_width(ui->left.label_2, LV_SIZE_CONTENT);
     lv_obj_set_height(ui->left.label_2, LV_SIZE_CONTENT);
     lv_obj_set_align(ui->left.label_2, LV_ALIGN_TOP_LEFT);
-    lv_obj_set_x(ui->left.label_2, 3);
+    lv_obj_set_x(ui->left.label_2, 6);
     lv_obj_set_y(ui->left.label_2, 51);
     lv_label_set_text(ui->left.label_2, "Hardware Information:\nImplemented based on STMF411CEU6");
 
@@ -79,7 +79,7 @@ void setup_left(gg_ui_t * ui)
     lv_obj_set_width(ui->left.label_2_copy, LV_SIZE_CONTENT);
     lv_obj_set_height(ui->left.label_2_copy, LV_SIZE_CONTENT);
     lv_obj_set_align(ui->left.label_2_copy, LV_ALIGN_TOP_LEFT);
-    lv_obj_set_x(ui->left.label_2_copy, 3);
+    lv_obj_set_x(ui->left.label_2_copy, 6);
     lv_obj_set_y(ui->left.label_2_copy, 95);
     lv_label_set_text(ui->left.label_2_copy, "LVGL Version Information:\nLVGL version: V9.4.0");
 
@@ -92,7 +92,7 @@ void setup_left(gg_ui_t * ui)
     lv_obj_set_width(ui->left.label_2_copy1, LV_SIZE_CONTENT);
     lv_obj_set_height(ui->left.label_2_copy1, LV_SIZE_CONTENT);
     lv_obj_set_align(ui->left.label_2_copy1, LV_ALIGN_TOP_LEFT);
-    lv_obj_set_x(ui->left.label_2_copy1, 3);
+    lv_obj_set_x(ui->left.label_2_copy1, 6);
     lv_obj_set_y(ui->left.label_2_copy1, 140);
     lv_label_set_text(ui->left.label_2_copy1,
                       "Sensor Information:\nMPU6050, blood oxygen, temperature \nhumidity, Bluetooth, magnetometer");
@@ -106,7 +106,7 @@ void setup_left(gg_ui_t * ui)
     lv_obj_set_width(ui->left.label_2_copy2, LV_SIZE_CONTENT);
     lv_obj_set_height(ui->left.label_2_copy2, LV_SIZE_CONTENT);
     lv_obj_set_align(ui->left.label_2_copy2, LV_ALIGN_TOP_LEFT);
-    lv_obj_set_x(ui->left.label_2_copy2, 3);
+    lv_obj_set_x(ui->left.label_2_copy2, 6);
     lv_obj_set_y(ui->left.label_2_copy2, 202);
     lv_label_set_text(ui->left.label_2_copy2,
                       "Developer Information:\nHardware: Open-sourced by F_C\nModified by SUN\nSoftware: SUN");

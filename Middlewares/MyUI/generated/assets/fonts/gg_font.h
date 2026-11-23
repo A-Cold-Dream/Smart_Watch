@@ -17,7 +17,7 @@
  *
  * Tool            : GUI Guider
  * Version         : 2.0.1
- * Generated on    : 2026/11/22
+ * Generated on    : 2026/11/23
  * ------------------------------------------------------------------------------
  */
 
@@ -29,6 +29,7 @@ extern "C" {
 
 #include "lvgl.h"
 
+LV_FONT_DECLARE(lv_font_montserratMedium_18);
 LV_FONT_DECLARE(lv_font_Alatsi_16);
 LV_FONT_DECLARE(lv_font_Alatsi_48);
 LV_FONT_DECLARE(lv_font_montserratMedium_12);
@@ -36,7 +37,6 @@ LV_FONT_DECLARE(lv_font_montserratMedium_16);
 LV_FONT_DECLARE(lv_font_montserratMedium_14);
 LV_FONT_DECLARE(lv_font_SourceHanSerifSC_12);
 LV_FONT_DECLARE(lv_font_montserratMedium_22);
-LV_FONT_DECLARE(lv_font_montserratMedium_18);
 
 #ifdef __cplusplus
 }

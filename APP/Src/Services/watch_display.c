@@ -2,16 +2,25 @@
 
 #include "AHT21.h"
 #include "CST816.h"
+#include "EM7028.h"
 #include "FreeRTOS.h"
+#include "LSM303DLHC.h"
 #include "MPU6050.h"
+#include "SPL06_001.h"
 #include "SetTime.h"
+#include "gui_guider.h"
+#include "src/display/lv_display.h"
 #include "src/misc/lv_timer.h"
+#include "src/misc/lv_types.h"
+#include "src/widgets/label/lv_label.h"
 #include "task.h"
 #include "custom.h"
 #include "gg_utils.h"
 #include "lcd.h"
 #include "lcd_init.h"
 #include "main.h"
+#include <stdint.h>
+#include <sys/types.h>
 
 /* LVGL 触点纵向校准，单位为像素。负值向上，正值向下。 */
 #define TOUCH_Y_OFFSET_PX (-15)
@@ -97,6 +106,52 @@ static void refresh_MPU6050(lv_timer_t *timer)
 
 }
 
+static void format_axes(char *text, size_t capacity, const int16_t axes[3], uint8_t valid)
+{
+    if (valid)
+        lv_snprintf(text, capacity, "X: %d\nY: %d\nZ: %d", axes[0], axes[1], axes[2]);
+    else
+        lv_snprintf(text, capacity, "X: --\nY: --\nZ: --");
+}
+
+static void refresh_sensor_pages(lv_timer_t *timer)
+{
+    gg_ui_t *ui = lv_timer_get_user_data(timer);
+    lv_obj_t *screen = lv_screen_active();
+    if (!screen) return;
+    /* GUI Guider 把所属页面的 screen 成员地址存入 user_data，页面重建后仍能识别。 */
+    const void *page = lv_obj_get_user_data(screen);
+    if (page == &ui->Barometer_Measure.screen) {
+        taskENTER_CRITICAL();
+        SPL06_001_Sample_t sample = SPL06_001_Sample;
+        taskEXIT_CRITICAL();
+        lv_obj_t *label = ui->Barometer_Measure.label_2_copy;
+        if (sample.valid) {
+            int pa = sample.pressure_pa;
+            lv_label_set_text_fmt(label, "Pressure\n%d.%02d hPa", pa / 100, pa % 100);
+        } else {
+            lv_label_set_text_static(label, "Pressure\n-- hPa");
+        }
+    } else if (page == &ui->Magnetic_Measure.screen) {
+        taskENTER_CRITICAL();
+        LSM303DLHC_Sample_t sample = LSM303DLHC_Sample;
+        taskEXIT_CRITICAL();
+        char mag[40], accel[40];
+        format_axes(mag, sizeof(mag), sample.mag, sample.mag_valid);
+        format_axes(accel, sizeof(accel), sample.accel, sample.accel_valid);
+        lv_label_set_text_fmt(ui->Magnetic_Measure.label_2_copy, "Mag raw\n%s\nAccel mg\n%s", mag, accel);
+    } else if (page == &ui->Heart_Rate_Measure.screen) {
+        taskENTER_CRITICAL();
+        EM7028_Sample_t sample = EM7028_Sample;
+        taskEXIT_CRITICAL();
+        lv_obj_t *label = ui->Heart_Rate_Measure.label_2_copy;
+        if (sample.valid)
+            lv_label_set_text_fmt(label, "Optical raw\n%u", (unsigned)sample.optical_raw);
+        else
+            lv_label_set_text_static(label, "Optical raw\n--");
+    }
+}
+
 static void refresh_TimeDeta(lv_timer_t *timer)
 {
     gg_main_t *page = lv_timer_get_user_data(timer);
@@ -104,7 +159,32 @@ static void refresh_TimeDeta(lv_timer_t *timer)
 
     if (SetTime_Read() == HAL_OK) {
         lv_label_set_text_fmt(page->clock, "%02u:%02u", (unsigned)Time.Hours, (unsigned)Time.Minutes);
+        static const char *const weekdays[] = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
+        if (Date.WeekDay >= 1U && Date.WeekDay <= 7U) {
+            char date_text[16];
+            lv_snprintf(date_text, sizeof(date_text), "%02u-%02u  %s",
+                        (unsigned)Date.Month, (unsigned)Date.Date, weekdays[Date.WeekDay - 1U]);
+            if (lv_strcmp(lv_label_get_text(page->riqi), date_text) != 0)
+                lv_label_set_text(page->riqi, date_text);
+        }
     }
+}
+
+static void refresh_main_TempAndHum(lv_timer_t *timer)
+{
+    gg_main_t *page = lv_timer_get_user_data(timer);
+    if(page ->screen == NULL || page ->screen != lv_screen_active())  return;
+
+    if(!AHT21_Sample.valid)  return;
+
+    int temp = AHT21_Sample.temperature_x10;
+    int magnitude = temp < 0 ? -temp : temp;
+    unsigned int humidity = AHT21_Sample.humidity_x10;
+    
+    lv_label_set_text_fmt(page ->wendu_label_4, "%s%d°",temp < 0 ? "-" : "", magnitude / 10);
+    lv_label_set_text_fmt(page ->shidu_label_4, "%d%%",humidity/10);
+    lv_arc_set_value(page ->wendu,magnitude / 10);//ui->main.wendu, 26
+    lv_arc_set_value(page ->shidu,humidity/10);
 }
 
 void Watch_Display_Init(void)
@@ -132,8 +212,10 @@ void Watch_Display_Init(void)
 
     lv_timer_create(refresh_temp_humidity, 1000U, &guider_ui.Temp_Humidity);
     lv_timer_create(refresh_MPU6050, 200U, &guider_ui.Attitude_Solving);
+    lv_timer_create(refresh_sensor_pages, 200U, &guider_ui);
     lv_timer_t *clock_timer = lv_timer_create(refresh_TimeDeta, 1000U, &guider_ui.main);
     refresh_TimeDeta(clock_timer);
+    lv_timer_create(refresh_main_TempAndHum, 1000U, &guider_ui.main);
 
     lv_refr_now(display);
     LCD_Set_Light(60);

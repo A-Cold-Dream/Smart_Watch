@@ -17,7 +17,7 @@
  *
  * Tool            : GUI Guider
  * Version         : 2.0.1
- * Generated on    : 2026/11/22
+ * Generated on    : 2026/11/23
  * ------------------------------------------------------------------------------
  */
 
@@ -55,11 +55,12 @@ typedef struct {
     lv_obj_t * button_1_copy_button_1_label;
     lv_obj_t * xiala_button_1;
     lv_obj_t * button_1_button_1_label;
-    lv_obj_t * xiala_WiFI;
-    lv_obj_t * WiFI_button_1_label;
-    lv_obj_t * xiala_lanya;
-    lv_obj_t * lanya_button_1_label;
+    lv_obj_t * xiala_Close;
+    lv_obj_t * Close_button_1_label;
+    lv_obj_t * xiala_BuleTooth;
+    lv_obj_t * BuleTooth_button_1_label;
     lv_obj_t * xiala_slider_1;
+    lv_obj_t * slider_1_label_7;
     lv_obj_t * tileview_1_xia;
     lv_obj_t * tileview_1_zhu;
     lv_obj_t * riqi;
@@ -178,6 +179,27 @@ typedef struct {
 } gg_Setting_t;
 
 typedef struct {
+    lv_obj_t * screen;
+    lv_obj_t * label_Week_text;
+    lv_obj_t * label_Day_text;
+    lv_obj_t * label_Mon_text;
+    lv_obj_t * Save;
+    lv_obj_t * Save_Save_label;
+    lv_obj_t * Back;
+    lv_obj_t * Back_Back_label;
+    lv_obj_t * Plus;
+    lv_obj_t * Plus_Plus_label;
+    lv_obj_t * Minus;
+    lv_obj_t * Minus_Minus_label;
+    lv_obj_t * label_year_text;
+    lv_obj_t * year;
+    lv_obj_t * week;
+    lv_obj_t * day;
+    lv_obj_t * Mon;
+    lv_obj_t * Top;
+} gg_SetData_t;
+
+typedef struct {
     gg_layer_sys_t layer_sys;
     gg_layer_top_t layer_top;
     gg_layer_bottom_t layer_bottom;
@@ -191,6 +213,7 @@ typedef struct {
     gg_Heart_Rate_Measure_t Heart_Rate_Measure;
     gg_BuleTooth_t BuleTooth;
     gg_Setting_t Setting;
+    gg_SetData_t SetData;
 } gg_ui_t;
 
 typedef struct {
@@ -217,6 +240,7 @@ void setup_Barometer_Measure(gg_ui_t * ui);
 void setup_Heart_Rate_Measure(gg_ui_t * ui);
 void setup_BuleTooth(gg_ui_t * ui);
 void setup_Setting(gg_ui_t * ui);
+void setup_SetData(gg_ui_t * ui);
 
 #ifdef __cplusplus
 }

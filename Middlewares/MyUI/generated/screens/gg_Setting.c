@@ -17,7 +17,7 @@
  *
  * Tool            : GUI Guider
  * Version         : 2.0.1
- * Generated on    : 2026/11/22
+ * Generated on    : 2026/11/23
  * ------------------------------------------------------------------------------
  */
 
@@ -78,7 +78,7 @@ void setup_Setting(gg_ui_t * ui)
     lv_obj_set_y(ui->Setting.container_1_copy_button_1, -2);
 
     // Style: ui->Setting.container_1_copy_button_1 [LV_PART_MAIN|LV_STATE_DEFAULT]
-    lv_obj_set_style_bg_color(ui->Setting.container_1_copy_button_1, lv_color_hex(0x00fffc),
+    lv_obj_set_style_bg_color(ui->Setting.container_1_copy_button_1, lv_color_hex(0x2196f3),
                               LV_PART_MAIN | LV_STATE_DEFAULT);
 
     // Create label: ui->Setting.button_1_label_2_copy
@@ -91,7 +91,7 @@ void setup_Setting(gg_ui_t * ui)
     lv_label_set_text(ui->Setting.button_1_label_2_copy, "TimeSet");
 
     // Style: ui->Setting.button_1_label_2_copy [LV_PART_MAIN|LV_STATE_DEFAULT]
-    lv_obj_set_style_text_color(ui->Setting.button_1_label_2_copy, lv_color_hex(0x0329b3), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui->Setting.button_1_label_2_copy, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui->Setting.button_1_label_2_copy, &lv_font_montserratMedium_18,
                                LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -104,7 +104,7 @@ void setup_Setting(gg_ui_t * ui)
     lv_obj_set_y(ui->Setting.container_1_copy_button_1_copy, 74);
 
     // Style: ui->Setting.container_1_copy_button_1_copy [LV_PART_MAIN|LV_STATE_DEFAULT]
-    lv_obj_set_style_bg_color(ui->Setting.container_1_copy_button_1_copy, lv_color_hex(0x00fffc),
+    lv_obj_set_style_bg_color(ui->Setting.container_1_copy_button_1_copy, lv_color_hex(0x2196f3),
                               LV_PART_MAIN | LV_STATE_DEFAULT);
 
     // Create label: ui->Setting.button_1_copy_label_2_copy_copy
@@ -117,7 +117,7 @@ void setup_Setting(gg_ui_t * ui)
     lv_label_set_text(ui->Setting.button_1_copy_label_2_copy_copy, "DateSet");
 
     // Style: ui->Setting.button_1_copy_label_2_copy_copy [LV_PART_MAIN|LV_STATE_DEFAULT]
-    lv_obj_set_style_text_color(ui->Setting.button_1_copy_label_2_copy_copy, lv_color_hex(0x0329b3),
+    lv_obj_set_style_text_color(ui->Setting.button_1_copy_label_2_copy_copy, lv_color_hex(0x000000),
                                 LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui->Setting.button_1_copy_label_2_copy_copy, &lv_font_montserratMedium_18,
                                LV_PART_MAIN | LV_STATE_DEFAULT);

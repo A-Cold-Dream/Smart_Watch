@@ -17,7 +17,7 @@
  *
  * Tool            : GUI Guider
  * Version         : 2.0.1
- * Generated on    : 2026/11/22
+ * Generated on    : 2026/11/23
  * ------------------------------------------------------------------------------
  */
 
@@ -27,6 +27,7 @@
 
 void setup_right(gg_ui_t * ui)
 {
+
     // Create screen: right
     ui->right.screen = lv_obj_create(NULL);
     lv_obj_set_user_data(ui->right.screen, &ui->right.screen);

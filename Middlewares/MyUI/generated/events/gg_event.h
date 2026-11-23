@@ -17,7 +17,7 @@
  *
  * Tool            : GUI Guider
  * Version         : 2.0.1
- * Generated on    : 2026/11/22
+ * Generated on    : 2026/11/23
  * ------------------------------------------------------------------------------
  */
 
@@ -60,6 +60,7 @@ void gg_event_init_Barometer_Measure(gg_ui_t * ui);
 void gg_event_init_Heart_Rate_Measure(gg_ui_t * ui);
 void gg_event_init_BuleTooth(gg_ui_t * ui);
 void gg_event_init_Setting(gg_ui_t * ui);
+void gg_event_init_SetData(gg_ui_t * ui);
 
 #ifdef __cplusplus
 }

@@ -17,13 +17,13 @@
  *
  * Tool            : GUI Guider
  * Version         : 2.0.1
- * Generated on    : 2026/11/22
+ * Generated on    : 2026/11/23
  * ------------------------------------------------------------------------------
  */
 
 #include "gg_event.h"
-#include "SetTime.h"
 #include "custom.h"
+#include "SetTime.h"
 
 static void screen_event_handler(lv_event_t * e)
 {
@@ -73,8 +73,35 @@ static void screen_event_handler(lv_event_t * e)
     }
 }
 
+static void container_1_copy_button_1_copy_event_handler(lv_event_t * e)
+{
+    gg_ui_t * ui = lv_event_get_user_data(e);
+
+    lv_event_code_t code = lv_event_get_code(e);
+
+    switch(code) {
+        case LV_EVENT_CLICKED: {
+            gg_screen_load_cfg_t cfg = {
+                .scr       = &ui->SetData.screen,
+                .setup_fn  = setup_SetData,
+                .anim_type = LV_SCREEN_LOAD_ANIM_NONE,
+                .time      = 0,
+                .delay     = 0,
+                .auto_del  = true,
+            };
+            gg_load_screen_animation(ui, &cfg);
+
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 void gg_event_init_Setting(gg_ui_t * ui)
 {
     lv_obj_add_event_cb(ui->Setting.container_1_copy_button_1, SetTime_Open, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(ui->Setting.screen, screen_event_handler, LV_EVENT_ALL, ui);
+    lv_obj_add_event_cb(ui->Setting.container_1_copy_button_1_copy, container_1_copy_button_1_copy_event_handler,
+                        LV_EVENT_ALL, ui);
 }

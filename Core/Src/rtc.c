@@ -22,6 +22,8 @@
 
 /* USER CODE BEGIN 0 */
 
+#define RTC_CALENDAR_MARKER 0x5743414CUL
+
 /* USER CODE END 0 */
 
 RTC_HandleTypeDef hrtc;
@@ -56,7 +58,9 @@ void MX_RTC_Init(void)
   }
 
   /* USER CODE BEGIN Check_RTC_BKUP */
-  if (__HAL_RTC_IS_CALENDAR_INITIALIZED(&hrtc)) {
+  /* 年份 2000 对应硬件的 00，仅看 INITS 会在复位时误清已设置的日期。 */
+  uint32_t marker = HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0);
+  if (__HAL_RTC_IS_CALENDAR_INITIALIZED(&hrtc) || marker == RTC_CALENDAR_MARKER) {
     /* HAL skips PRER for a retained calendar. Correct older firmware's divider in place. */
     uint32_t prescaler = (hrtc.Init.AsynchPrediv << RTC_PRER_PREDIV_A_Pos) | hrtc.Init.SynchPrediv;
     if (hrtc.Instance->PRER != prescaler) {
@@ -70,6 +74,8 @@ void MX_RTC_Init(void)
       __HAL_RTC_WRITEPROTECTION_ENABLE(&hrtc);
       if (status != HAL_OK) Error_Handler();
     }
+    if (marker != RTC_CALENDAR_MARKER)
+      HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0, RTC_CALENDAR_MARKER);
     return;
   }
   /* USER CODE END Check_RTC_BKUP */
@@ -95,6 +101,7 @@ void MX_RTC_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN RTC_Init 2 */
+  HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0, RTC_CALENDAR_MARKER);
 
   /* USER CODE END RTC_Init 2 */
 
