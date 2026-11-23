@@ -83,21 +83,21 @@ const osThreadAttr_t MPU6050_task_attributes = {
 osThreadId_t SPL06_001_taskHandle;
 const osThreadAttr_t SPL06_001_task_attributes = {
   .name = "SPL06_001_task",
-  .stack_size = 64 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for EM7028_task */
 osThreadId_t EM7028_taskHandle;
 const osThreadAttr_t EM7028_task_attributes = {
   .name = "EM7028_task",
-  .stack_size = 64 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for LSM303DLHC_task */
 osThreadId_t LSM303DLHC_taskHandle;
 const osThreadAttr_t LSM303DLHC_task_attributes = {
   .name = "LSM303DLHC_task",
-  .stack_size = 64 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for BT_task */

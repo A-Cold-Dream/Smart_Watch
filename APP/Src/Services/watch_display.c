@@ -4,6 +4,8 @@
 #include "CST816.h"
 #include "FreeRTOS.h"
 #include "MPU6050.h"
+#include "SetTime.h"
+#include "src/misc/lv_timer.h"
 #include "task.h"
 #include "custom.h"
 #include "gg_utils.h"
@@ -12,7 +14,7 @@
 #include "main.h"
 
 /* LVGL 触点纵向校准，单位为像素。负值向上，正值向下。 */
-#define TOUCH_Y_OFFSET_PX (-20)
+#define TOUCH_Y_OFFSET_PX (-15)
 
 gg_ui_t guider_ui;
 static _Alignas(LV_DRAW_BUF_ALIGN) uint16_t draw_buffer[LCD_W * 8];
@@ -95,6 +97,16 @@ static void refresh_MPU6050(lv_timer_t *timer)
 
 }
 
+static void refresh_TimeDeta(lv_timer_t *timer)
+{
+    gg_main_t *page = lv_timer_get_user_data(timer);
+    if(page ->screen == NULL || page ->screen != lv_screen_active())  return;
+
+    if (SetTime_Read() == HAL_OK) {
+        lv_label_set_text_fmt(page->clock, "%02u:%02u", (unsigned)Time.Hours, (unsigned)Time.Minutes);
+    }
+}
+
 void Watch_Display_Init(void)
 {
     LCD_Init();
@@ -120,6 +132,8 @@ void Watch_Display_Init(void)
 
     lv_timer_create(refresh_temp_humidity, 1000U, &guider_ui.Temp_Humidity);
     lv_timer_create(refresh_MPU6050, 200U, &guider_ui.Attitude_Solving);
+    lv_timer_t *clock_timer = lv_timer_create(refresh_TimeDeta, 1000U, &guider_ui.main);
+    refresh_TimeDeta(clock_timer);
 
     lv_refr_now(display);
     LCD_Set_Light(60);

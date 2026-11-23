@@ -83,6 +83,7 @@ endforeach()
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${WATCH_UI_SOURCES}
     APP/Src/Services/watch_display.c
+    APP/Src/Tasks/SetTime.c
     Components/Display/Src/lcd_init.c
     Components/Display/Src/lcd.c
     Components/Display/Src/CST816.c

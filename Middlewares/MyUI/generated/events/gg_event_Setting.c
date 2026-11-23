@@ -22,6 +22,7 @@
  */
 
 #include "gg_event.h"
+#include "SetTime.h"
 #include "custom.h"
 
 static void screen_event_handler(lv_event_t * e)
@@ -74,5 +75,6 @@ static void screen_event_handler(lv_event_t * e)
 
 void gg_event_init_Setting(gg_ui_t * ui)
 {
+    lv_obj_add_event_cb(ui->Setting.container_1_copy_button_1, SetTime_Open, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(ui->Setting.screen, screen_event_handler, LV_EVENT_ALL, ui);
 }

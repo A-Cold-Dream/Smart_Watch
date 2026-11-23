@@ -21,6 +21,8 @@ typedef enum{
 #define KEY_DEBOUNCE_MS     20
 #define KEY_LONG_MS         800
 
+extern volatile key_event_t key_state;
+
 key_event_t key_scan(GPIO_TypeDef *port, uint16_t pin);
 
 #endif
