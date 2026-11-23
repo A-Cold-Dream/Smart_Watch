@@ -3,6 +3,7 @@
 #include "AHT21.h"
 #include "CST816.h"
 #include "FreeRTOS.h"
+#include "MPU6050.h"
 #include "task.h"
 #include "custom.h"
 #include "gg_utils.h"
@@ -68,6 +69,32 @@ static void refresh_temp_humidity(lv_timer_t *timer)
                           humidity / 10U, humidity % 10U);
 }
 
+static void refresh_MPU6050(lv_timer_t *timer)
+{
+    gg_Attitude_Solving_t *page = lv_timer_get_user_data(timer);
+    if(page ->screen == NULL || page ->screen != lv_screen_active())  return;
+
+    taskENTER_CRITICAL();
+    MPU6050_Sample_t sample = MPU6050_Sample;
+    taskEXIT_CRITICAL();
+
+    if(!sample.valid)
+    {
+        lv_label_set_text_static(page ->label_2_copy,
+            "Xacc = xx\nYacc = xx\nZacc = xx\n"
+            "Xgyro = xx\nYgyro = xx\nZgyro = xx"
+            );
+            return;
+    }
+
+    lv_label_set_text_fmt(page ->label_2_copy,
+            "Xacc = %d\nYacc = %d\nZacc = %d\n"
+            "Xgyro = %d\nYgyro = %d\nZgyro = %d",
+            sample.accel[0],sample.accel[1],sample.accel[2],
+            sample.gyro[0],sample.gyro[1],sample.gyro[2]);
+
+}
+
 void Watch_Display_Init(void)
 {
     LCD_Init();
@@ -90,7 +117,10 @@ void Watch_Display_Init(void)
 
     setup_ui(&guider_ui);
     custom_init(&guider_ui);
+
     lv_timer_create(refresh_temp_humidity, 1000U, &guider_ui.Temp_Humidity);
+    lv_timer_create(refresh_MPU6050, 200U, &guider_ui.Attitude_Solving);
+
     lv_refr_now(display);
     LCD_Set_Light(60);
     LCD_Open_Light();
