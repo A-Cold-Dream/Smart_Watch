@@ -13,6 +13,7 @@
 #include "src/misc/lv_timer.h"
 #include "src/misc/lv_types.h"
 #include "src/widgets/label/lv_label.h"
+#include "src/widgets/slider/lv_slider.h"
 #include "task.h"
 #include "custom.h"
 #include "gg_utils.h"
@@ -27,6 +28,7 @@
 
 gg_ui_t guider_ui;
 static _Alignas(LV_DRAW_BUF_ALIGN) uint16_t draw_buffer[LCD_W * 8];
+volatile uint8_t LCD_Light = 50;
 
 static void flush_display(lv_display_t *display, const lv_area_t *area, uint8_t *pixels)
 {
@@ -187,6 +189,16 @@ static void refresh_main_TempAndHum(lv_timer_t *timer)
     lv_arc_set_value(page ->shidu,humidity/10);
 }
 
+static void refresh_LCD_Light(lv_timer_t *timer)
+{
+    gg_main_t *page = lv_timer_get_user_data(timer);
+    if(page ->screen == NULL || page ->screen != lv_screen_active())  return;
+
+    LCD_Light = lv_slider_get_value(page ->xiala_slider_1);
+
+    LCD_Set_Light(LCD_Light);
+}
+
 void Watch_Display_Init(void)
 {
     LCD_Init();
@@ -216,8 +228,9 @@ void Watch_Display_Init(void)
     lv_timer_t *clock_timer = lv_timer_create(refresh_TimeDeta, 1000U, &guider_ui.main);
     refresh_TimeDeta(clock_timer);
     lv_timer_create(refresh_main_TempAndHum, 1000U, &guider_ui.main);
+    lv_timer_create(refresh_LCD_Light, 500U, &guider_ui.main);
 
     lv_refr_now(display);
-    LCD_Set_Light(60);
+    LCD_Set_Light(LCD_Light);
     LCD_Open_Light();
 }
