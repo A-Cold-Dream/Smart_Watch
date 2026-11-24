@@ -6,6 +6,7 @@
 
 extern osMessageQueueId_t BTTxQueueHandle;
 extern osThreadId_t BT_taskHandle;
+extern osSemaphoreId_t BT_switchHandle;
 
 uint8_t BT_IsEnabled(void)
 {
@@ -18,6 +19,8 @@ void BT_SetEnabled(uint8_t enabled)
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, enabled ? GPIO_PIN_SET : GPIO_PIN_RESET);
     if (!enabled) osMessageQueueReset(BTTxQueueHandle);
     osThreadFlagsSet(BT_taskHandle, BT_SWITCH_CHANGED);
+    /* 通知显示任务重读 BLE_EN。多次切换只需刷新一次最终状态。 */
+    osSemaphoreRelease(BT_switchHandle);
 }
 
 void Uart_printf(const char *fmt,...)

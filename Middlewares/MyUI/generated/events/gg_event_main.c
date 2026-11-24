@@ -74,5 +74,6 @@ static void screen_event_handler(lv_event_t * e)
 
 void gg_event_init_main(gg_ui_t * ui)
 {
+    BT_BindControl(ui, ui->main.xiala_button_1_copy);
     lv_obj_add_event_cb(ui->main.screen, screen_event_handler, LV_EVENT_ALL, ui);
 }

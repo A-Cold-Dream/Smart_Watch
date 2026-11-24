@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include "lvgl.h"
 #include "custom.h"
+#include "Uart_APP.h"
 
 /*********************
  *      DEFINES
@@ -31,9 +32,30 @@
  *  STATIC VARIABLES
  **********************/
 
-/**
- * Create a demo application
- */
+void BT_SyncControls(gg_ui_t *ui)
+{
+    uint8_t enabled = BT_IsEnabled();
+    if (ui->main.screen != NULL) {
+        lv_obj_set_state(ui->main.xiala_button_1_copy, LV_STATE_CHECKED, enabled);
+    }
+    if (ui->BuleTooth.screen != NULL) {
+        lv_obj_set_state(ui->BuleTooth.container_1_switch_1, LV_STATE_CHECKED, enabled);
+        lv_label_set_text_static(ui->BuleTooth.label_2, enabled ? "Bluetooth ON" : "Bluetooth OFF");
+    }
+}
+
+static void bt_control_changed(lv_event_t *event)
+{
+    lv_obj_t *control = lv_event_get_current_target_obj(event);
+    BT_SetEnabled(lv_obj_has_state(control, LV_STATE_CHECKED));
+}
+
+void BT_BindControl(gg_ui_t *ui, lv_obj_t *control)
+{
+    /* 页面重建时，即使之前的通知已消费，新控件也会显示当前状态。 */
+    BT_SyncControls(ui);
+    lv_obj_add_event_cb(control, bt_control_changed, LV_EVENT_VALUE_CHANGED, NULL);
+}
 
 void custom_init(gg_ui_t *ui)
 {

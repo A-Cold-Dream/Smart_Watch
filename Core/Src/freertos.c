@@ -37,6 +37,7 @@
 #include "Key.h"
 #include "iic_hal.h"
 #include "Uart_APP.h"
+#include "custom.h"
 #include <stdint.h>
 #include <string.h>
 /* USER CODE END Includes */
@@ -142,6 +143,11 @@ osMutexId_t UartMutexHandle;
 const osMutexAttr_t UartMutex_attributes = {
   .name = "UartMutex"
 };
+/* Definitions for BT_switch */
+osSemaphoreId_t BT_switchHandle;
+const osSemaphoreAttr_t BT_switch_attributes = {
+  .name = "BT_switch"
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -179,6 +185,10 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
+
+  /* Create the semaphores(s) */
+  /* creation of BT_switch */
+  BT_switchHandle = osSemaphoreNew(1, 1, &BT_switch_attributes);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
@@ -248,6 +258,8 @@ void StartLVGL_Tick(void *argument)
   for(;;)
   {
     uint32_t flags = osThreadFlagsWait(DISPLAY_KEY1_ACTIVITY, osFlagsWaitAny, pdMS_TO_TICKS(5U));
+    if (osSemaphoreAcquire(BT_switchHandle, 0U) == osOK)
+      BT_SyncControls(&guider_ui);
     lv_timer_handler();
     Watch_Display_UpdatePower(flags == DISPLAY_KEY1_ACTIVITY);
   }

@@ -16,6 +16,8 @@ extern "C" {
 #include "../generated/gui_guider.h"
 
 void custom_init(gg_ui_t *ui);
+void BT_SyncControls(gg_ui_t *ui);
+void BT_BindControl(gg_ui_t *ui, lv_obj_t *control);
 
 #ifdef __cplusplus
 }
