@@ -85,6 +85,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     APP/Src/Services/watch_display.c
     APP/Src/Tasks/SetTime.c
     APP/Src/Tasks/SetDate.c
+    APP/Src/Tasks/Uart_APP.c
     Components/Display/Src/lcd_init.c
     Components/Display/Src/lcd.c
     Components/Display/Src/CST816.c

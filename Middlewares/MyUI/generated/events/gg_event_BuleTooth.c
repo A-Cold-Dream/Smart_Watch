@@ -23,6 +23,7 @@
 
 #include "gg_event.h"
 #include "custom.h"
+#include "Uart_APP.h"
 
 static void screen_event_handler(lv_event_t * e)
 {
@@ -75,21 +76,17 @@ static void screen_event_handler(lv_event_t * e)
 static void container_1_switch_1_event_handler(lv_event_t * e)
 {
     gg_ui_t * ui = lv_event_get_user_data(e);
-
-    lv_event_code_t code = lv_event_get_code(e);
-
-    switch(code) {
-        case LV_EVENT_CLICKED: {
-
-            break;
-        }
-        default:
-            break;
-    }
+    uint8_t enabled = lv_obj_has_state(ui->BuleTooth.container_1_switch_1, LV_STATE_CHECKED);
+    BT_SetEnabled(enabled);
+    lv_label_set_text_static(ui->BuleTooth.label_2, enabled ? "Bluetooth ON" : "Bluetooth OFF");
 }
 
 void gg_event_init_BuleTooth(gg_ui_t * ui)
 {
+    uint8_t enabled = BT_IsEnabled();
+    lv_obj_set_state(ui->BuleTooth.container_1_switch_1, LV_STATE_CHECKED, enabled);
+    lv_label_set_text_static(ui->BuleTooth.label_2, enabled ? "Bluetooth ON" : "Bluetooth OFF");
     lv_obj_add_event_cb(ui->BuleTooth.screen, screen_event_handler, LV_EVENT_ALL, ui);
-    lv_obj_add_event_cb(ui->BuleTooth.container_1_switch_1, container_1_switch_1_event_handler, LV_EVENT_ALL, ui);
+    lv_obj_add_event_cb(ui->BuleTooth.container_1_switch_1, container_1_switch_1_event_handler,
+                        LV_EVENT_VALUE_CHANGED, ui);
 }

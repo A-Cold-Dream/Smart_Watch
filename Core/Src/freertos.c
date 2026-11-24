@@ -31,10 +31,14 @@
 #include "EM7028.h"
 #include "SPL06_001.h"
 #include "lvgl.h"
+#include "usart.h"
 #include "watch_display.h"
 #include "Led.h"
 #include "Key.h"
 #include "iic_hal.h"
+#include "Uart_APP.h"
+#include <stdint.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,25 +110,37 @@ const osThreadAttr_t LSM303DLHC_task_attributes = {
 osThreadId_t BT_taskHandle;
 const osThreadAttr_t BT_task_attributes = {
   .name = "BT_task",
-  .stack_size = 64 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal7,
 };
 /* Definitions for Key_task */
 osThreadId_t Key_taskHandle;
 const osThreadAttr_t Key_task_attributes = {
   .name = "Key_task",
   .stack_size = 64 * 4,
-  .priority = (osPriority_t) osPriorityNormal7,
+  .priority = (osPriority_t) osPriorityAboveNormal7,
 };
-/* Definitions for BTQueue */
-osMessageQueueId_t BTQueueHandle;
-const osMessageQueueAttr_t BTQueue_attributes = {
-  .name = "BTQueue"
+/* Definitions for vUartTxTask */
+osThreadId_t vUartTxTaskHandle;
+const osThreadAttr_t vUartTxTask_attributes = {
+  .name = "vUartTxTask",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal7,
+};
+/* Definitions for BTTxQueue */
+osMessageQueueId_t BTTxQueueHandle;
+const osMessageQueueAttr_t BTTxQueue_attributes = {
+  .name = "BTTxQueue"
 };
 /* Definitions for ReadDataMutex */
 osMutexId_t ReadDataMutexHandle;
 const osMutexAttr_t ReadDataMutex_attributes = {
   .name = "ReadDataMutex"
+};
+/* Definitions for UartMutex */
+osMutexId_t UartMutexHandle;
+const osMutexAttr_t UartMutex_attributes = {
+  .name = "UartMutex"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -140,6 +156,7 @@ void EM7028_starttask(void *argument);
 void LSM303_starttask(void *argument);
 void BT_starttask(void *argument);
 void Key_starttask(void *argument);
+void vUartTxTaskStart(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -156,6 +173,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of ReadDataMutex */
   ReadDataMutexHandle = osMutexNew(&ReadDataMutex_attributes);
 
+  /* creation of UartMutex */
+  UartMutexHandle = osMutexNew(&UartMutex_attributes);
+
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
@@ -169,8 +189,8 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the queue(s) */
-  /* creation of BTQueue */
-  BTQueueHandle = osMessageQueueNew (5, sizeof(uint16_t), &BTQueue_attributes);
+  /* creation of BTTxQueue */
+  BTTxQueueHandle = osMessageQueueNew (8, 128, &BTTxQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -200,6 +220,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of Key_task */
   Key_taskHandle = osThreadNew(Key_starttask, NULL, &Key_task_attributes);
+
+  /* creation of vUartTxTask */
+  vUartTxTaskHandle = osThreadNew(vUartTxTaskStart, NULL, &vUartTxTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -357,7 +380,13 @@ void BT_starttask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+
+    uint32_t timeout = BT_IsEnabled() ? pdMS_TO_TICKS(BT_TEST_PERIOD_MS) : osWaitForever;
+    uint32_t flags = osThreadFlagsWait(BT_SWITCH_CHANGED, osFlagsWaitAny, timeout);
+    if (flags == osFlagsErrorTimeout && BT_IsEnabled())
+    {
+      Uart_printf("A");
+    }
   }
   /* USER CODE END BT_starttask */
 }
@@ -383,6 +412,32 @@ void Key_starttask(void *argument)
     osDelay(pdMS_TO_TICKS(10U));
   }
   /* USER CODE END Key_starttask */
+}
+
+/* USER CODE BEGIN Header_vUartTxTaskStart */
+/**
+* @brief Function implementing the vUartTxTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_vUartTxTaskStart */
+void vUartTxTaskStart(void *argument)
+{
+  /* USER CODE BEGIN vUartTxTaskStart */
+  char buf[UART_TX_ITEM_SIZE];
+  /* Infinite loop */
+  for(;;)
+  {
+
+    if (osMessageQueueGet(BTTxQueueHandle, buf, NULL, osWaitForever) != osOK) continue;
+    if (osMutexAcquire(UartMutexHandle, pdMS_TO_TICKS(30U)) == osOK)
+    {
+      if (BT_IsEnabled())
+        HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), 30U);
+      osMutexRelease(UartMutexHandle);
+    }
+  }
+  /* USER CODE END vUartTxTaskStart */
 }
 
 /* Private application code --------------------------------------------------*/
