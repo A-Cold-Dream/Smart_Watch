@@ -45,6 +45,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+#define DISPLAY_KEY1_ACTIVITY (1U << 0)
+
 volatile key_event_t key_state = KEY_EVT_NONE;
 
 /* USER CODE END PD */
@@ -222,8 +224,9 @@ void StartLVGL_Tick(void *argument)
   Watch_Display_Init();
   for(;;)
   {
+    uint32_t flags = osThreadFlagsWait(DISPLAY_KEY1_ACTIVITY, osFlagsWaitAny, pdMS_TO_TICKS(5U));
     lv_timer_handler();
-    osDelay(5);
+    Watch_Display_UpdatePower(flags == DISPLAY_KEY1_ACTIVITY);
   }
   /* USER CODE END StartLVGL_Tick */
 }
@@ -374,6 +377,8 @@ void Key_starttask(void *argument)
   {
 
     key_state = key_scan(GPIOA, GPIO_PIN_5);
+    if (key_is_pressed())
+        osThreadFlagsSet(LVGL_TickHandle, DISPLAY_KEY1_ACTIVITY);
 
     osDelay(pdMS_TO_TICKS(10U));
   }

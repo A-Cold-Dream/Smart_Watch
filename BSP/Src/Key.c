@@ -1,8 +1,14 @@
 #include "Key.h"
 
+static key_state_t state = KEY_IDLE;
+
+uint8_t key_is_pressed(void)
+{
+    return state == KEY_PRESSED || state == KEY_DEBOUNCE_UP;
+}
+
 key_event_t key_scan(GPIO_TypeDef *port, uint16_t pin)
 {
-    static key_state_t state = KEY_IDLE;
     static TickType_t  t_enter = 0;
     static uint8_t     long_fired = 0;          
     TickType_t now = xTaskGetTickCount();

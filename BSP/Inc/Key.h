@@ -24,5 +24,6 @@ typedef enum{
 extern volatile key_event_t key_state;
 
 key_event_t key_scan(GPIO_TypeDef *port, uint16_t pin);
+uint8_t key_is_pressed(void);
 
 #endif

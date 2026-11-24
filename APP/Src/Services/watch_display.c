@@ -25,10 +25,13 @@
 
 /* LVGL 触点纵向校准，单位为像素。负值向上，正值向下。 */
 #define TOUCH_Y_OFFSET_PX (-15)
+#define SCREEN_IDLE_TIMEOUT_MS 15000U
 
 gg_ui_t guider_ui;
 static _Alignas(LV_DRAW_BUF_ALIGN) uint16_t draw_buffer[LCD_W * 8];
 volatile uint8_t LCD_Light = 50;
+static bool screen_off;
+static lv_indev_t *touch_input;
 
 static void flush_display(lv_display_t *display, const lv_area_t *area, uint8_t *pixels)
 {
@@ -48,7 +51,7 @@ static void read_touch(lv_indev_t *indev, lv_indev_data_t *data)
     data->state = LV_INDEV_STATE_RELEASED;
     /* Bottom-edge samples can be outside LCD_H before the upward correction. */
     const unsigned int raw_y_limit = LCD_H - LV_MIN(TOUCH_Y_OFFSET_PX, 0);
-    if (CST816_ReadTouch(&touch) && touch.X_Pos < LCD_W && touch.Y_Pos < raw_y_limit) {
+    if (!screen_off && CST816_ReadTouch(&touch) && touch.X_Pos < LCD_W && touch.Y_Pos < raw_y_limit) {
         int32_t y = (int32_t)touch.Y_Pos + TOUCH_Y_OFFSET_PX;
         last_point.x = touch.X_Pos;
         last_point.y = LV_CLAMP(0, y, LCD_H - 1);
@@ -192,11 +195,31 @@ static void refresh_main_TempAndHum(lv_timer_t *timer)
 static void refresh_LCD_Light(lv_timer_t *timer)
 {
     gg_main_t *page = lv_timer_get_user_data(timer);
-    if(page ->screen == NULL || page ->screen != lv_screen_active())  return;
+    if (screen_off || page->screen == NULL || page->screen != lv_screen_active()) return;
+    int32_t brightness = lv_slider_get_value(page->xiala_slider_1);
+    if (brightness >= 5 && brightness <= 100) {
+        LCD_Light = brightness;
+        LCD_Set_Light(LCD_Light);
+    }
+}
 
-    LCD_Light = lv_slider_get_value(page ->xiala_slider_1);
-
-    LCD_Set_Light(LCD_Light);
+/* 只从 LVGL 任务调用。触摸按下时 LVGL 会自行更新活动时间。 */
+void Watch_Display_UpdatePower(bool key1_activity)
+{
+    lv_display_t *display = lv_display_get_default();
+    if (key1_activity) {
+        lv_display_trigger_activity(display);
+        if (screen_off) {
+            lv_indev_wait_release(touch_input);
+            LCD_WR_REG(0x29);  /* ST7789 DISPON */
+            LCD_Set_Light(LCD_Light);
+            screen_off = false;
+        }
+    } else if (!screen_off && lv_display_get_inactive_time(display) >= SCREEN_IDLE_TIMEOUT_MS) {
+        LCD_Close_Light();
+        LCD_WR_REG(0x28);  /* ST7789 DISPOFF */
+        screen_off = true;
+    }
 }
 
 void Watch_Display_Init(void)
@@ -213,11 +236,11 @@ void Watch_Display_Init(void)
                            LV_DISPLAY_RENDER_MODE_PARTIAL);
     lv_display_set_flush_cb(display, flush_display);
 
-    lv_indev_t *touch = lv_indev_create();
-    if (touch == NULL) Error_Handler();
-    lv_indev_set_type(touch, LV_INDEV_TYPE_POINTER);
-    lv_indev_set_display(touch, display);
-    lv_indev_set_read_cb(touch, read_touch);
+    touch_input = lv_indev_create();
+    if (touch_input == NULL) Error_Handler();
+    lv_indev_set_type(touch_input, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_display(touch_input, display);
+    lv_indev_set_read_cb(touch_input, read_touch);
 
     setup_ui(&guider_ui);
     custom_init(&guider_ui);
@@ -233,4 +256,5 @@ void Watch_Display_Init(void)
     lv_refr_now(display);
     LCD_Set_Light(LCD_Light);
     LCD_Open_Light();
+    lv_display_trigger_activity(display);
 }
