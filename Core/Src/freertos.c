@@ -33,6 +33,7 @@
 #include "lvgl.h"
 #include "usart.h"
 #include "watch_display.h"
+#include "WatchTimer.h"
 #include "Led.h"
 #include "Key.h"
 #include "iic_hal.h"
@@ -51,6 +52,8 @@
 /* USER CODE BEGIN PD */
 
 #define DISPLAY_KEY1_ACTIVITY (1U << 0)
+#define DISPLAY_STOPWATCH_TICK (1U << 1)
+#define DISPLAY_COUNTDOWN_DONE (1U << 2)
 
 volatile key_event_t key_state = KEY_EVT_NONE;
 
@@ -133,6 +136,16 @@ osMessageQueueId_t BTTxQueueHandle;
 const osMessageQueueAttr_t BTTxQueue_attributes = {
   .name = "BTTxQueue"
 };
+/* Definitions for StopwatchTimer */
+osTimerId_t StopwatchTimerHandle;
+const osTimerAttr_t StopwatchTimer_attributes = {
+  .name = "StopwatchTimer"
+};
+/* Definitions for CountdownTimer */
+osTimerId_t CountdownTimerHandle;
+const osTimerAttr_t CountdownTimer_attributes = {
+  .name = "CountdownTimer"
+};
 /* Definitions for ReadDataMutex */
 osMutexId_t ReadDataMutexHandle;
 const osMutexAttr_t ReadDataMutex_attributes = {
@@ -163,6 +176,8 @@ void LSM303_starttask(void *argument);
 void BT_starttask(void *argument);
 void Key_starttask(void *argument);
 void vUartTxTaskStart(void *argument);
+void StopwatchTimerCallback(void *argument);
+void CountdownTimerCallback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -193,6 +208,10 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
+
+  /* Create the timer(s) */
+  StopwatchTimerHandle = osTimerNew(StopwatchTimerCallback, osTimerPeriodic, NULL, &StopwatchTimer_attributes);
+  CountdownTimerHandle = osTimerNew(CountdownTimerCallback, osTimerOnce, NULL, &CountdownTimer_attributes);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
@@ -257,11 +276,15 @@ void StartLVGL_Tick(void *argument)
   Watch_Display_Init();
   for(;;)
   {
-    uint32_t flags = osThreadFlagsWait(DISPLAY_KEY1_ACTIVITY, osFlagsWaitAny, pdMS_TO_TICKS(5U));
+    uint32_t flags = osThreadFlagsWait(DISPLAY_KEY1_ACTIVITY | DISPLAY_STOPWATCH_TICK | DISPLAY_COUNTDOWN_DONE,
+                                       osFlagsWaitAny, pdMS_TO_TICKS(5U));
+    if (flags & osFlagsError) flags = 0U;
     if (osSemaphoreAcquire(BT_switchHandle, 0U) == osOK)
       BT_SyncControls(&guider_ui);
     lv_timer_handler();
-    Watch_Display_UpdatePower(flags == DISPLAY_KEY1_ACTIVITY);
+    if (flags & DISPLAY_STOPWATCH_TICK) Stopwatch_Refresh();
+    if (flags & DISPLAY_COUNTDOWN_DONE) Countdown_Expired();
+    Watch_Display_UpdatePower((flags & DISPLAY_KEY1_ACTIVITY) != 0U);
   }
   /* USER CODE END StartLVGL_Tick */
 }
@@ -450,6 +473,24 @@ void vUartTxTaskStart(void *argument)
     }
   }
   /* USER CODE END vUartTxTaskStart */
+}
+
+/* StopwatchTimerCallback function */
+void StopwatchTimerCallback(void *argument)
+{
+  /* USER CODE BEGIN StopwatchTimerCallback */
+  (void)argument;
+  osThreadFlagsSet(LVGL_TickHandle, DISPLAY_STOPWATCH_TICK);
+  /* USER CODE END StopwatchTimerCallback */
+}
+
+/* CountdownTimerCallback function */
+void CountdownTimerCallback(void *argument)
+{
+  /* USER CODE BEGIN CountdownTimerCallback */
+  (void)argument;
+  osThreadFlagsSet(LVGL_TickHandle, DISPLAY_COUNTDOWN_DONE);
+  /* USER CODE END CountdownTimerCallback */
 }
 
 /* Private application code --------------------------------------------------*/

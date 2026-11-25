@@ -299,7 +299,7 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_align(ui->right.butt8_but8_text, LV_ALIGN_CENTER);
     lv_obj_set_x(ui->right.butt8_but8_text, -50);
     lv_obj_set_y(ui->right.butt8_but8_text, 0);
-    lv_label_set_text(ui->right.butt8_but8_text, "button8");
+    lv_label_set_text(ui->right.butt8_but8_text, "Stopwatch");
 
     // Create button: ui->right.butt9
     ui->right.butt9 = lv_button_create(ui->right.screen);
@@ -320,7 +320,7 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_align(ui->right.butt9_but9_text, LV_ALIGN_CENTER);
     lv_obj_set_x(ui->right.butt9_but9_text, -50);
     lv_obj_set_y(ui->right.butt9_but9_text, 0);
-    lv_label_set_text(ui->right.butt9_but9_text, "button9");
+    lv_label_set_text(ui->right.butt9_but9_text, "Countdown");
 
     // Create button: ui->right.butt10
     ui->right.butt10 = lv_button_create(ui->right.screen);

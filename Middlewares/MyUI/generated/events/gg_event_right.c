@@ -23,6 +23,7 @@
 
 #include "gg_event.h"
 #include "custom.h"
+#include "WatchTimer.h"
 
 static void butt1_event_handler(lv_event_t * e)
 {
@@ -270,4 +271,6 @@ void gg_event_init_right(gg_ui_t * ui)
     lv_obj_add_event_cb(ui->right.butt4, butt4_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->right.butt5, butt5_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->right.butt7, butt7_event_handler, LV_EVENT_ALL, ui);
+    lv_obj_add_event_cb(ui->right.butt8, Stopwatch_Open, LV_EVENT_CLICKED, ui);
+    lv_obj_add_event_cb(ui->right.butt9, Countdown_Open, LV_EVENT_CLICKED, ui);
 }
