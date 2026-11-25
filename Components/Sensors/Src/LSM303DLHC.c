@@ -33,15 +33,24 @@ static FrameStatus ReadFrame(uint8_t address, uint8_t status_reg, uint8_t ready_
     return FRAME_READY;
 }
 
+static uint8_t accel_configured, mag_configured;
+
+void LSM303DLHC_Sleep(void)
+{
+    SensorI2C_Write(ACC_ADDR, ACC_CTRL1, 0U); /* ODR = power down */
+    SensorI2C_Write(MAG_ADDR, MAG_MODE, 3U);  /* magnetic sleep */
+    accel_configured = mag_configured = 0U;
+    LSM303DLHC_Sample.accel_valid = LSM303DLHC_Sample.mag_valid = 0U;
+}
+
 static uint8_t ReadAccel(int16_t axis[3], uint8_t previous_valid)
 {
-    static uint8_t configured;
     static TickType_t last_frame;
     uint8_t reg, frame[6], i;
-    if (!configured)
+    if (!accel_configured)
     {
         /* BDU, high resolution, +/-2 g. Then start all axes at 50 Hz. */
-        configured = SensorI2C_Write(ACC_ADDR, ACC_CTRL4, 0x88U) &&
+        accel_configured = SensorI2C_Write(ACC_ADDR, ACC_CTRL4, 0x88U) &&
                      SensorI2C_Write(ACC_ADDR, ACC_CTRL1, 0x47U) &&
                      SensorI2C_Read(ACC_ADDR, ACC_CTRL1, &reg, 1U) && reg == 0x47U;
         last_frame = xTaskGetTickCount();
@@ -51,7 +60,7 @@ static uint8_t ReadAccel(int16_t axis[3], uint8_t previous_valid)
     if (result == FRAME_PENDING) return previous_valid;
     if (result == FRAME_ERROR)
     {
-        configured = 0U;
+        accel_configured = 0U;
         return 0U;
     }
     for (i = 0U; i < 3U; i++)
@@ -69,13 +78,12 @@ static int16_t MagWord(const uint8_t *bytes)
 
 static uint8_t ReadMag(int16_t axis[3], uint8_t previous_valid)
 {
-    static uint8_t configured;
     static TickType_t last_frame;
     uint8_t frame[6];
-    if (!configured)
+    if (!mag_configured)
     {
         /* The magnetic interface identifies itself as "H43". */
-        configured = SensorI2C_Read(MAG_ADDR, MAG_ID_A, frame, 3U) &&
+        mag_configured = SensorI2C_Read(MAG_ADDR, MAG_ID_A, frame, 3U) &&
                      frame[0] == 'H' && frame[1] == '4' && frame[2] == '3' &&
                      SensorI2C_Write(MAG_ADDR, MAG_CONFIG_A, 0x10U) && /* 15 Hz */
                      SensorI2C_Write(MAG_ADDR, MAG_CONFIG_B, 0x20U) && /* +/-1.3 gauss */
@@ -87,7 +95,7 @@ static uint8_t ReadMag(int16_t axis[3], uint8_t previous_valid)
     if (result == FRAME_PENDING) return previous_valid;
     if (result == FRAME_ERROR)
     {
-        configured = 0U;
+        mag_configured = 0U;
         return 0U;
     }
     /* Magnetometer registers are big-endian and ordered X, Z, Y. */

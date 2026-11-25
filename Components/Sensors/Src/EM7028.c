@@ -51,9 +51,19 @@ static uint8_t ReadOptical(uint16_t *raw)
     return 0U;
 }
 
+static uint8_t configured;
+
+void EM7028_Sleep(void)
+{
+    uint8_t cfg;
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+    if (ReadReg(HRS_CFG, &cfg)) SensorI2C_Write(EM_ADDR, HRS_CFG, cfg & 0x77U);
+    configured = 0U;
+    EM7028_Sample.valid = 0U;
+}
+
 void EM7028_Read(void)
 {
-    static uint8_t configured;
     EM7028_Sample_t sample = {0};
     if (!configured)
         configured = Configure();

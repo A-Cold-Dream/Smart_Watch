@@ -1,4 +1,6 @@
 #include "watch_display.h"
+#include "watch_power.h"
+#include "WatchTimer.h"
 
 #include "AHT21.h"
 #include "CST816.h"
@@ -32,6 +34,7 @@ static _Alignas(LV_DRAW_BUF_ALIGN) uint16_t draw_buffer[LCD_W * 8];
 volatile uint8_t LCD_Light = 50;
 static bool screen_off;
 static lv_indev_t *touch_input;
+static lv_timer_t *clock_timer;
 
 static void flush_display(lv_display_t *display, const lv_area_t *area, uint8_t *pixels)
 {
@@ -207,19 +210,22 @@ static void refresh_LCD_Light(lv_timer_t *timer)
 void Watch_Display_UpdatePower(bool key1_activity)
 {
     lv_display_t *display = lv_display_get_default();
-    if (key1_activity) {
-        lv_display_trigger_activity(display);
-        if (screen_off) {
-            lv_indev_wait_release(touch_input);
-            LCD_WR_REG(0x29);  /* ST7789 DISPON */
-            LCD_Set_Light(LCD_Light);
-            screen_off = false;
-        }
-    } else if (!screen_off && lv_display_get_inactive_time(display) >= SCREEN_IDLE_TIMEOUT_MS) {
-        LCD_Close_Light();
-        LCD_WR_REG(0x28);  /* ST7789 DISPOFF */
-        screen_off = true;
-    }
+    if (key1_activity) lv_display_trigger_activity(display);
+    if (lv_display_get_inactive_time(display) < SCREEN_IDLE_TIMEOUT_MS) return;
+    screen_off = true;
+    LCD_Close_Light();
+    LCD_WR_REG(0x28); /* DISPOFF */
+    Watch_Power_Sleep(); /* 阻塞到 KEY1 或 RTC 闹钟唤醒。 */
+
+    lv_display_trigger_activity(display);
+    lv_indev_wait_release(touch_input);
+    screen_off = false;
+    Countdown_Expired();
+    refresh_TimeDeta(clock_timer);
+    lv_obj_invalidate(lv_screen_active());
+    lv_refr_now(display);
+    LCD_WR_REG(0x29);
+    LCD_Set_Light(LCD_Light);
 }
 
 void Watch_Display_Init(void)
@@ -248,7 +254,7 @@ void Watch_Display_Init(void)
     lv_timer_create(refresh_temp_humidity, 1000U, &guider_ui.Temp_Humidity);
     lv_timer_create(refresh_MPU6050, 200U, &guider_ui.Attitude_Solving);
     lv_timer_create(refresh_sensor_pages, 200U, &guider_ui);
-    lv_timer_t *clock_timer = lv_timer_create(refresh_TimeDeta, 1000U, &guider_ui.main);
+    clock_timer = lv_timer_create(refresh_TimeDeta, 1000U, &guider_ui.main);
     refresh_TimeDeta(clock_timer);
     lv_timer_create(refresh_main_TempAndHum, 1000U, &guider_ui.main);
     lv_timer_create(refresh_LCD_Light, 500U, &guider_ui.main);

@@ -33,6 +33,7 @@
 #include "lvgl.h"
 #include "usart.h"
 #include "watch_display.h"
+#include "watch_power.h"
 #include "WatchTimer.h"
 #include "Led.h"
 #include "Key.h"
@@ -305,12 +306,14 @@ void AHT21_starttask(void *argument)
 
   for(;;)
   {
-    if (!ready)
-    {
-      ready = AHT21_Init();
-      if (ready) last_wake = xTaskGetTickCount();
+    if (Watch_Power_BeginSample()) {
+      if (!ready) {
+        ready = AHT21_Init();
+        if (ready) last_wake = xTaskGetTickCount();
+      }
+      if (ready) ready = AHT21_Read();
+      Watch_Power_EndSample();
     }
-    if (ready) ready = AHT21_Read();
     vTaskDelayUntil(&last_wake, sample_period);
   }
   /* USER CODE END AHT21_starttask */
@@ -333,7 +336,10 @@ void MPU6050_starttask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    MPU6050_Read();
+    if (Watch_Power_BeginSample()) {
+      MPU6050_Read();
+      Watch_Power_EndSample();
+    }
     vTaskDelayUntil(&last_wake, sample_period);
   }
   /* USER CODE END MPU6050_starttask */
@@ -354,7 +360,10 @@ void SPL06_starttask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    SPL06_001_Read();
+    if (Watch_Power_BeginSample()) {
+      SPL06_001_Read();
+      Watch_Power_EndSample();
+    }
     vTaskDelayUntil(&last_wake, sample_period);
   }
   /* USER CODE END SPL06_starttask */
@@ -375,7 +384,10 @@ void EM7028_starttask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    EM7028_Read();
+    if (Watch_Power_BeginSample()) {
+      EM7028_Read();
+      Watch_Power_EndSample();
+    }
     vTaskDelayUntil(&last_wake, sample_period);
   }
   /* USER CODE END EM7028_starttask */
@@ -396,7 +408,10 @@ void LSM303_starttask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    LSM303DLHC_Read();
+    if (Watch_Power_BeginSample()) {
+      LSM303DLHC_Read();
+      Watch_Power_EndSample();
+    }
     vTaskDelayUntil(&last_wake, sample_period);
   }
   /* USER CODE END LSM303_starttask */

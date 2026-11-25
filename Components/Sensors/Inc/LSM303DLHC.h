@@ -13,5 +13,6 @@ typedef struct
 
 extern volatile LSM303DLHC_Sample_t LSM303DLHC_Sample;
 void LSM303DLHC_Read(void);
+void LSM303DLHC_Sleep(void);
 
 #endif

@@ -25,6 +25,8 @@
 #include "gg_utils.h"
 #include "events/gg_event.h"
 
+// LV_FONT_DECLARE(lv_font_iconfont_16);
+
 void setup_right(gg_ui_t * ui)
 {
 
@@ -70,6 +72,8 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_x(ui->right.butt1_label_1, 5);
     lv_obj_set_y(ui->right.butt1_label_1, -4);
     lv_label_set_text(ui->right.butt1_label_1, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
+    
+    // lv_obj_set_style_text_font(ui ->right.butt1_label_1, &lv_font_iconfont, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     // Create button: ui->right.butt2
     ui->right.butt2 = lv_button_create(ui->right.screen);
@@ -297,9 +301,18 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_width(ui->right.butt8_but8_text, LV_SIZE_CONTENT);
     lv_obj_set_height(ui->right.butt8_but8_text, LV_SIZE_CONTENT);
     lv_obj_set_align(ui->right.butt8_but8_text, LV_ALIGN_CENTER);
-    lv_obj_set_x(ui->right.butt8_but8_text, -50);
+    lv_obj_set_x(ui->right.butt8_but8_text, -40);
     lv_obj_set_y(ui->right.butt8_but8_text, 0);
     lv_label_set_text(ui->right.butt8_but8_text, "Stopwatch");
+
+    // Create label: ui->right.butt8_label_1
+    ui->right.butt8_label_1 = lv_label_create(ui->right.butt8);
+    lv_obj_set_width(ui->right.butt8_label_1, LV_SIZE_CONTENT);
+    lv_obj_set_height(ui->right.butt8_label_1, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui->right.butt8_label_1, LV_ALIGN_TOP_LEFT);
+    lv_obj_set_x(ui->right.butt8_label_1, 5);
+    lv_obj_set_y(ui->right.butt8_label_1, -4);
+    lv_label_set_text(ui->right.butt8_label_1, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
 
     // Create button: ui->right.butt9
     ui->right.butt9 = lv_button_create(ui->right.screen);
@@ -318,9 +331,18 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_width(ui->right.butt9_but9_text, LV_SIZE_CONTENT);
     lv_obj_set_height(ui->right.butt9_but9_text, LV_SIZE_CONTENT);
     lv_obj_set_align(ui->right.butt9_but9_text, LV_ALIGN_CENTER);
-    lv_obj_set_x(ui->right.butt9_but9_text, -50);
+    lv_obj_set_x(ui->right.butt9_but9_text, -36);
     lv_obj_set_y(ui->right.butt9_but9_text, 0);
     lv_label_set_text(ui->right.butt9_but9_text, "Countdown");
+
+    // Create label: ui->right.butt9_label_1
+    ui->right.butt9_label_1 = lv_label_create(ui->right.butt9);
+    lv_obj_set_width(ui->right.butt9_label_1, LV_SIZE_CONTENT);
+    lv_obj_set_height(ui->right.butt9_label_1, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui->right.butt9_label_1, LV_ALIGN_TOP_LEFT);
+    lv_obj_set_x(ui->right.butt9_label_1, 5);
+    lv_obj_set_y(ui->right.butt9_label_1, -4);
+    lv_label_set_text(ui->right.butt9_label_1, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
 
     // Create button: ui->right.butt10
     ui->right.butt10 = lv_button_create(ui->right.screen);

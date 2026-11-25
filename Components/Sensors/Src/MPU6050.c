@@ -103,9 +103,17 @@ static int16_t DecodeAxis(const uint8_t *bytes)
     return (int16_t)(((uint16_t)bytes[0] << 8) | bytes[1]);
 }
 
+static uint8_t initialized;
+
+void MPU6050_Sleep(void)
+{
+    WriteRegister(MPU6050_PWR_MGMT_1, 0x41U); /* SLEEP */
+    initialized = 0U;
+    MPU6050_Sample.valid = 0U;
+}
+
 void MPU6050_Read(void)
 {
-    static uint8_t initialized;
     MPU6050_Sample_t sample = {0};
     uint8_t frame[14];
     uint8_t axis;

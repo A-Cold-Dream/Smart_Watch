@@ -11,5 +11,6 @@ typedef struct
 
 extern volatile EM7028_Sample_t EM7028_Sample;
 void EM7028_Read(void);
+void EM7028_Sleep(void);
 
 #endif

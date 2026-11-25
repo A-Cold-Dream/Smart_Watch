@@ -12,5 +12,6 @@ typedef struct {
 extern volatile MPU6050_Sample_t MPU6050_Sample;
 
 void MPU6050_Read(void);
+void MPU6050_Sleep(void);
 
 #endif

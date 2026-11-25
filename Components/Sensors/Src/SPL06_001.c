@@ -72,9 +72,17 @@ static uint8_t ReadPressure(int32_t *pressure_pa)
     return 1U;
 }
 
+static uint8_t configured;
+
+void SPL06_001_Sleep(void)
+{
+    SensorI2C_Write(SPL_ADDR, MEAS_CFG, 0x00U); /* Idle */
+    configured = 0U;
+    SPL06_001_Sample.valid = 0U;
+}
+
 void SPL06_001_Read(void)
 {
-    static uint8_t configured;
     static TickType_t last_frame;
     SPL06_001_Sample_t sample = {0};
     if (!configured) {

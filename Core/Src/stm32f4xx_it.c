@@ -218,6 +218,11 @@ void DMA2_Stream5_IRQHandler(void)
   /* USER CODE END DMA2_Stream5_IRQn 1 */
 }
 
+void EXTI9_5_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
+}
+
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

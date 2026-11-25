@@ -23,6 +23,7 @@
 
 #ifndef GUI_GUIDER_H
 #define GUI_GUIDER_H
+#include "src/misc/lv_types.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -86,8 +87,10 @@ typedef struct {
     lv_obj_t * butt10_but10_text;
     lv_obj_t * butt9;
     lv_obj_t * butt9_but9_text;
+    lv_obj_t * butt9_label_1;
     lv_obj_t * butt8;
     lv_obj_t * butt8_but8_text;
+    lv_obj_t * butt8_label_1;
     lv_obj_t * butt7;
     lv_obj_t * butt7_label_1_copy_copy;
     lv_obj_t * butt7_but7_text;

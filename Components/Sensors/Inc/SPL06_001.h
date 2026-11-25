@@ -11,5 +11,6 @@ typedef struct
 
 extern volatile SPL06_001_Sample_t SPL06_001_Sample;
 void SPL06_001_Read(void);
+void SPL06_001_Sleep(void);
 
 #endif

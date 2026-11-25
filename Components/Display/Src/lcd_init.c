@@ -2,6 +2,8 @@
 #include "delay.h"
 #include "spi.h"
 #include "tim.h"
+#include "cmsis_os2.h"
+#include "FreeRTOS.h"
 
 /******************************************************************************
       函数说明：LCD端口初始化
@@ -155,7 +157,7 @@ void LCD_Open_Light(void)
 void LCD_ST7789_SleepIn(void)
 {
 	LCD_WR_REG(0x10);
-	delay_ms(100);
+	osDelay(pdMS_TO_TICKS(120U));
 }
 
 
@@ -167,7 +169,7 @@ void LCD_ST7789_SleepIn(void)
 void LCD_ST7789_SleepOut(void)
 {
 	LCD_WR_REG(0x11);
-	delay_ms(100);
+	osDelay(pdMS_TO_TICKS(120U));
 }
 
 

@@ -226,8 +226,9 @@ void Countdown_Open(lv_event_t *event)
     edit_panel = lv_obj_create(countdown_screen);
     lv_obj_remove_style_all(edit_panel);
     lv_obj_remove_flag(edit_panel, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_size(edit_panel, 210, 108);
-    lv_obj_align(edit_panel, LV_ALIGN_CENTER, 0, -15);
+    /* 下边缘不动，给滚轮上方的 Min / Sec 多留 28 像素。 */
+    lv_obj_set_size(edit_panel, 210, 136);
+    lv_obj_align(edit_panel, LV_ALIGN_CENTER, 0, -29);
 
     char options[60 * 3];
     for (unsigned i = 0; i < 60U; ++i) {
@@ -245,6 +246,33 @@ void Countdown_Open(lv_event_t *event)
     countdown_refresh = lv_timer_create(refresh_remaining, 200U, NULL);
     lv_obj_add_event_cb(countdown_screen, delete_countdown, LV_EVENT_DELETE, NULL);
     countdown_controls();
+}
+
+void Stopwatch_PauseForSleep(void)
+{
+    if (watch_state == WATCH_RUNNING) toggle_watch(NULL);
+}
+
+uint32_t Countdown_RemainingMs(void)
+{
+    if (!countdown_running) return UINT32_MAX;
+    uint32_t elapsed = osKernelGetTickCount() - countdown_started;
+    return elapsed < countdown_ticks ? (countdown_ticks - elapsed) * portTICK_PERIOD_MS : 0U;
+}
+
+void Countdown_RestoreMs(uint32_t remaining)
+{
+    countdown_started = osKernelGetTickCount();
+    countdown_ticks = pdMS_TO_TICKS(remaining);
+    if (!countdown_ticks) {
+        osTimerStop(CountdownTimerHandle);
+    } else {
+        /* 队列暂满时给 timer daemon 运行机会，按最新余量重新提交。 */
+        uint32_t left;
+        while ((left = Countdown_RemainingMs()) != 0U &&
+               osTimerStart(CountdownTimerHandle, pdMS_TO_TICKS(left)) != osOK)
+            osDelay(1U);
+    }
 }
 
 void Countdown_Expired(void)
