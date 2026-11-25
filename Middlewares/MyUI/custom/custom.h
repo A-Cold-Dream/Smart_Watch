@@ -18,6 +18,7 @@ extern "C" {
 void custom_init(gg_ui_t *ui);
 void BT_SyncControls(gg_ui_t *ui);
 void BT_BindControl(gg_ui_t *ui, lv_obj_t *control);
+void CL_Power(lv_event_t *event);
 
 #ifdef __cplusplus
 }

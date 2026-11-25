@@ -23,6 +23,9 @@
 
 #include "gg_event.h"
 #include "custom.h"
+#include "src/core/lv_obj_event.h"
+#include "src/misc/lv_event.h"
+#include <inttypes.h>
 
 static void screen_event_handler(lv_event_t * e)
 {
@@ -76,4 +79,5 @@ void gg_event_init_main(gg_ui_t * ui)
 {
     BT_BindControl(ui, ui->main.xiala_button_1_copy);
     lv_obj_add_event_cb(ui->main.screen, screen_event_handler, LV_EVENT_ALL, ui);
+    lv_obj_add_event_cb(ui ->main.xiala_Close, CL_Power, LV_EVENT_CLICKED, NULL);
 }

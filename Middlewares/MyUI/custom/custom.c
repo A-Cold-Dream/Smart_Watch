@@ -15,6 +15,8 @@
 #include "lvgl.h"
 #include "custom.h"
 #include "Uart_APP.h"
+#include "main.h"
+#include "watch_power.h"
 
 /*********************
  *      DEFINES
@@ -55,6 +57,14 @@ void BT_BindControl(gg_ui_t *ui, lv_obj_t *control)
     /* 页面重建时，即使之前的通知已消费，新控件也会显示当前状态。 */
     BT_SyncControls(ui);
     lv_obj_add_event_cb(control, bt_control_changed, LV_EVENT_VALUE_CHANGED, NULL);
+}
+
+
+void CL_Power(lv_event_t *event)
+{
+    (void)event;
+    HAL_GPIO_WritePin(POWER_EN_GPIO_Port, POWER_EN_Pin, GPIO_PIN_RESET);
+    Watch_Power_Sleep();
 }
 
 void custom_init(gg_ui_t *ui)

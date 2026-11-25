@@ -24,8 +24,11 @@
 #include "gui_guider.h"
 #include "gg_utils.h"
 #include "events/gg_event.h"
+#include "src/core/lv_obj_style.h"
+#include "src/core/lv_obj_style_gen.h"
+#include "src/widgets/label/lv_label.h"
 
-// LV_FONT_DECLARE(lv_font_iconfont_16);
+LV_FONT_DECLARE(lv_font_iconfont_16);
 
 void setup_right(gg_ui_t * ui)
 {
@@ -107,7 +110,9 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_align(ui->right.butt2_label_1, LV_ALIGN_TOP_LEFT);
     lv_obj_set_x(ui->right.butt2_label_1, 5);
     lv_obj_set_y(ui->right.butt2_label_1, -4);
-    lv_label_set_text(ui->right.butt2_label_1, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
+
+    lv_obj_set_style_text_font(ui->right.butt2_label_1, &lv_font_iconfont_16, LV_PART_MAIN);
+    lv_label_set_text_static(ui->right.butt2_label_1, "\xEE\x98\x9C");
 
     // Create button: ui->right.butt3
     ui->right.butt3 = lv_button_create(ui->right.screen);
@@ -141,7 +146,9 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_align(ui->right.butt3_label_1, LV_ALIGN_TOP_LEFT);
     lv_obj_set_x(ui->right.butt3_label_1, 5);
     lv_obj_set_y(ui->right.butt3_label_1, -4);
-    lv_label_set_text(ui->right.butt3_label_1, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
+
+    lv_obj_set_style_text_font(ui->right.butt3_label_1, &lv_font_iconfont_16, LV_PART_MAIN);
+    lv_label_set_text_static(ui->right.butt3_label_1, "\xEE\x98\xA9");
 
     // Create button: ui->right.butt4
     ui->right.butt4 = lv_button_create(ui->right.screen);
@@ -209,7 +216,9 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_align(ui->right.butt5_label_1_copy, LV_ALIGN_TOP_LEFT);
     lv_obj_set_x(ui->right.butt5_label_1_copy, 5);
     lv_obj_set_y(ui->right.butt5_label_1_copy, -3);
-    lv_label_set_text(ui->right.butt5_label_1_copy, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
+    // lv_label_set_text(ui->right.butt5_label_1_copy, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
+    lv_obj_set_style_text_font(ui->right.butt5_label_1_copy, &lv_font_iconfont_16, LV_PART_MAIN);
+    lv_label_set_text_static(ui->right.butt5_label_1_copy, "\xEE\x98\x88");
 
     // Create button: ui->right.butt6
     ui->right.butt6 = lv_button_create(ui->right.screen);
@@ -312,7 +321,9 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_align(ui->right.butt8_label_1, LV_ALIGN_TOP_LEFT);
     lv_obj_set_x(ui->right.butt8_label_1, 5);
     lv_obj_set_y(ui->right.butt8_label_1, -4);
-    lv_label_set_text(ui->right.butt8_label_1, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
+
+    lv_obj_set_style_text_font(ui ->right.butt8_label_1, &lv_font_iconfont_16, LV_PART_MAIN);
+    lv_label_set_text_static(ui ->right.butt8_label_1, "\xEE\x9D\xA9");
 
     // Create button: ui->right.butt9
     ui->right.butt9 = lv_button_create(ui->right.screen);
@@ -342,7 +353,9 @@ void setup_right(gg_ui_t * ui)
     lv_obj_set_align(ui->right.butt9_label_1, LV_ALIGN_TOP_LEFT);
     lv_obj_set_x(ui->right.butt9_label_1, 5);
     lv_obj_set_y(ui->right.butt9_label_1, -4);
-    lv_label_set_text(ui->right.butt9_label_1, LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT);
+
+    lv_obj_set_style_text_font(ui ->right.butt9_label_1, &lv_font_iconfont_16, LV_PART_MAIN);
+    lv_label_set_text_static(ui ->right.butt9_label_1, "\xEE\x9D\xA9");
 
     // Create button: ui->right.butt10
     ui->right.butt10 = lv_button_create(ui->right.screen);
