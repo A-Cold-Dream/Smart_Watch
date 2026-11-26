@@ -37,6 +37,11 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
+# SystemInit lives in the generated driver target.
+target_compile_definitions(STM32_Drivers PRIVATE USER_VECT_TAB_ADDRESS VECT_TAB_OFFSET=0x8000U)
+set_property(TARGET ${CMAKE_PROJECT_NAME} APPEND PROPERTY LINK_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/STM32F411XX_FLASH.ld" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/package_app.py")
+
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -44,6 +49,10 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 set(LVGL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/LVGL)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND Python3::Interpreter "${CMAKE_CURRENT_SOURCE_DIR}/cmake/package_app.py"
+            "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>" "${CMAKE_CURRENT_BINARY_DIR}/Smart_Watch.bin"
+    BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/Smart_Watch.bin" VERBATIM)
 
 # Compile compact copies in the build tree, keeping the GUI Guider exports intact.
 function(watch_pack_font source_list font)

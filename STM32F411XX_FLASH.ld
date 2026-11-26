@@ -56,7 +56,9 @@ ENTRY(Reset_Handler)
 MEMORY
 {
 RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 512K
+/* Sectors 2-7. The bootloader commits the image record in the last 16 bytes. */
+FLASH (rx)      : ORIGIN = 0x08008000, LENGTH = 480K - 16
+RECORD (r)      : ORIGIN = 0x0807FFF0, LENGTH = 16
 }
 
 /* Highest address of the user mode stack */
@@ -75,6 +77,17 @@ SECTIONS
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
+
+  /* The sender checks this before it asks the bootloader to erase flash. */
+  .ota_target :
+  {
+    LONG(0x31415753)  /* "SWA1" */
+    LONG(ORIGIN(FLASH))
+  } >FLASH
+  ASSERT(ADDR(.ota_target) == ORIGIN(FLASH) + 0x198, "Unexpected F411 vector table size")
+
+  /* Filled after linking so a debugger can install a bootable APP ELF as well. */
+  .boot_record : { LONG(0xFFFFFFFF) LONG(0xFFFFFFFF) LONG(0xFFFFFFFF) LONG(0xFFFFFFFF) } >RECORD
 
   /* The program code and other data goes into FLASH */
   .text :
